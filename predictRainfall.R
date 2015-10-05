@@ -63,7 +63,8 @@ coefficients = fit$coefficients
 coefficients["Id"] =  0 #Exclude Id from model application
 names = names(coefficients)
 
-rm(full, null, step, fit)
+rm(full, null, step)
+gc()
 
 
 ########################
@@ -97,8 +98,8 @@ test2$SD.refcomp[is.na(test2$SD.refcomp)] = 0
 
 #Generalize model application
 test2[,"(Intercept)" := 1] #Dummy "variable" for intercept "coefficient"
-test2= test2[, colnames(test2) %in% c(names), with=FALSE] #Only include modeled features
-test2= test2[, c(names), with = FALSE] #Reorder variables to match model coefficients
+test2 = test2[, colnames(test2) %in% c(names), with = FALSE] #Only include modeled features
+test2 = test2[, c(names), with = FALSE] #Reorder variables to match model coefficients
 test2[, Expected := as.matrix(test2[.I]) %*% coefficients] #Perform dot product of variables and coefficients
 
 
@@ -121,3 +122,5 @@ output$Expected[is.na(output$Expected)] = default
 
 #Write submission file
 write.csv(output, "submission.csv", row.names = FALSE)
+
+rm(Id, all)
