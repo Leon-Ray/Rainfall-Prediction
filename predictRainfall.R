@@ -34,7 +34,7 @@ rm(q3, iqr, lim)
 ### Process Train Data  ###
 ###########################
 
-#Generate features for model development
+#Collapse to one record per Id and generate features for model development
 train2 = train[,list(observations=.N, radardist_km=mean(radardist_km), 
                      mean.ref=mean(Ref), median.ref=median(Ref),SD.ref=sd(Ref), min.ref=min(Ref), max.ref=max(Ref),
                      mean.refcomp=mean(RefComposite), median.refcomp=median(RefComposite),SD.refcomp=sd(RefComposite), min.refcomp=min(RefComposite), max.refcomp=max(RefComposite),
@@ -81,7 +81,7 @@ test = fread("test.csv", stringsAsFactors = F )
 #Remove rows with missing explanatory data
 test = test[Ref != "NA", ]
 
-#Generate features for model application
+#Collapse to one record per Id and generate features for model application
 test2 = test[,list(observations=.N, radardist_km=mean(radardist_km), 
                    mean.ref=mean(Ref), median.ref=median(Ref),SD.ref=sd(Ref), min.ref=min(Ref), max.ref=max(Ref),
                    mean.refcomp=mean(RefComposite), median.refcomp=median(RefComposite),SD.refcomp=sd(RefComposite), min.refcomp=min(RefComposite), max.refcomp=max(RefComposite)), 
@@ -114,7 +114,7 @@ output = test2[, .(Id, Expected)]
 setkey(output, Id)
 
 #Where explanatory variables were not available, apply the median result from train data
-Id = c(1:717625) #number of observations in the test data
+Id = c(1:717625) #number of Ids in the test data
 all = as.data.table(Id)
 setkey(all, Id)
 output = merge(all, output, all.x=TRUE)
